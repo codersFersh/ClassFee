@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atbanfei.ssm.dao.ClassFeeDao">
+    <resultMap id="ClassFeeWithResult" type="com.atbanfei.ssm.pojo.ClassFee">
+        <id property="f_id" column="f_id"></id>
+        <result property="f_date" column="f_date"/>
+        <result property="f_title" column="f_title"/>
+        <result property="g_id" column="g_id"/>
+        <result property="f_gross" column="f_gross"/>
+        <result property="f_status" column="f_status"/>
+        <association property="grade" javaType="com.atbanfei.ssm.pojo.Grade">
+            <id property="g_id" column="g_id"/>
+            <result property="g_classname" column="g_classname"/>
+        </association>
+    </resultMap>
+    <!-- List<ClassFee> selectAllClassFee();-->
+    <select id="selectAllClassFee"  parameterType="Integer" resultMap="ClassFeeWithResult">
+        select f.*,g.g_classname from tb_classfee f,tb_grade g where f.g_id=g.g_id
+    </select>
+
+
+    <!-- List<ClassFee>searchTitle(String s_title);-->
+    <select id="searchTitle"  parameterType="java.lang.String" resultMap="ClassFeeWithResult">
+        select f.*,g.g_classname from tb_classfee f,tb_grade g where f.g_id=g.g_id
+        <if test="f_title!=null and f_title!=''">
+            and f.f_title like concat('%',#{f_title},'%')
+        </if>
+    </select>
+
+
+    <!-- ClassFee getClassFeeById(Integer f_id);-->
+    <select id="getClassFeeById" parameterType="Integer" resultType="com.atbanfei.ssm.pojo.ClassFee">
+        select * from tb_classfee where f_id = #{f_id}
+    </select>
+
+
+    <!-- int insertClassFee(ClassFee classFee);-->
+    <insert id="insertClassFee" parameterType="com.atbanfei.ssm.pojo.ClassFee">
+        insert into tb_classfee(f_title,g_id,f_gross,f_status)
+        value (#{f_title},#{g_id},#{f_gross},#{f_status})
+    </insert>
+
+    <!--int updateClassFee(ClassFee classFee);-->
+    <update id="updateClassFee" parameterType="com.atbanfei.ssm.pojo.ClassFee">
+        update tb_classfee
+        set  f_title = #{f_title},
+             f_gross = #{f_gross},
+             f_status = #{f_status}
+        where f_id = #{f_id}
+    </update>
+
+
+    <!-- int deleteClassFee(Integer f_id);-->
+    <delete id="deleteClassFee" parameterType="Integer">
+        delete from tb_classfee where f_id = #{f_id};
+    </delete>
+
+    <select id="sumFee" parameterType="Double" resultType="java.lang.Double">
+        select SUM(f_gross) from tb_classfee
+    </select>
+
+
+</mapper>

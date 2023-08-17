@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--id ="接口中的方法名"
+　　parameterType="传入的参数类型"
+　　resultType = "返回实体类对象，使用包.类名"-->
+
+
+<mapper namespace="com.atbanfei.ssm.dao.StudentDao">
+    <resultMap id="StudentWithGradeAndRole" type="com.atbanfei.ssm.pojo.Student">
+        <id property="s_id" column="s_id"></id>
+        <result property="s_name" column="s_name"/>
+        <result property="s_gender" column="s_gender"/>
+        <result property="s_phone" column="s_phone"/>
+        <result property="s_password" column="s_password"/>
+        <result property="g_id" column="g_id"/>
+        <result property="r_id" column="r_id"/>
+        <association property="grade" javaType="com.atbanfei.ssm.pojo.Grade">
+            <id property="g_id" column="g_id"/>
+            <result property="g_classname" column="g_classname"/>
+        </association>
+        <association property="role" javaType="com.atbanfei.ssm.pojo.Role">
+            <id property="r_id" column="r_id"/>
+            <result property="r_name" column="r_name"/>
+            <result property="r_description" column="r_description"/>
+        </association>
+    </resultMap>
+    <!--List<Student>selectStudentByAll();-->
+    <select id="selectAllStudent"  parameterType="Integer" resultMap="StudentWithGradeAndRole">
+        select s.*,g.g_classname,r.r_name from tb_student s,tb_grade g,tb_role r where s.g_id=g.g_id and s.r_id=r.r_id
+    </select>
+
+    <!--List<Student> searchStuName(String s_name);-->
+    <select id="searchStuName" parameterType="java.lang.String" resultMap="StudentWithGradeAndRole">
+        select s.*,g.g_classname,r.r_name from tb_student s,tb_grade g,tb_role r where s.g_id=g.g_id and s.r_id=r.r_id
+        <if test="s_name!=null and s_name!=''">
+            and s.s_name like concat('%',#{s_name},'%')
+        </if>
+    </select>
+
+    <!--   int insertStudent(Student student);-->
+    <insert id="insertStudent" parameterType="com.atbanfei.ssm.pojo.Student" >
+        insert into tb_student(s_id,s_name,s_gender,s_phone,s_password,g_id,r_id)
+        values(#{s_id},#{s_name},#{s_gender},#{s_phone},#{s_password},#{g_id},#{r_id})
+    </insert>
+
+    <!-- int updateStudent(Student student);-->
+    <update id="updateStudent" parameterType="com.atbanfei.ssm.pojo.Student">
+        update tb_student
+        set s_name=#{s_name},
+            s_gender=#{s_gender},
+            s_phone=#{s_phone},
+            g_id=#{g_id},
+            r_id=#{r_id}
+        where s_id=#{s_id}
+    </update>
+
+    <!-- Student getStudentById(Integer s_id);-->
+    <select id="getStudentById" parameterType="Integer"  resultType="com.atbanfei.ssm.pojo.Student">
+        select * from tb_student where s_id = #{s_id}
+    </select>
+
+
+    <!-- int deleteStudent(Integer id);-->
+    <delete id="deleteStudent" parameterType="Integer">
+        delete from tb_student where s_id = #{s_id}
+    </delete>
+
+    <select id="countStudent"  resultType="Integer">
+        select count(*) from tb_student
+    </select>
+
+    <!--Student LoginUser() throws UserException;-->
+    <select id="LoginUser"  parameterType="Student" resultType="com.atbanfei.ssm.pojo.Student">
+        select * from tb_student where s_phone = #{s_phone} and s_password = #{s_password}
+    </select>
+
+</mapper>
