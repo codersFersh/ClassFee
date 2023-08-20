@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atbanfei.ssm.dao.ExpendDao">
+
+    <!--  List<Expend> selectAllExpend();-->
+    <select id="selectAllExpend" parameterType="Integer" resultType="com.atbanfei.ssm.pojo.Expend" >
+        select *  from  tb_expend
+    </select>
+
+
+    <!-- Expend getExpendById(Integer e_id);-->
+    <select id="getExpendById" parameterType="Integer" resultType="com.atbanfei.ssm.pojo.Expend">
+        select * from tb_expend where e_id = #{e_id}
+    </select>
+
+    <select id="searchTitle" parameterType="java.lang.String" resultType="com.atbanfei.ssm.pojo.Expend">
+        select * from tb_expend where e_title like concat('%',#{e_title},'%')
+    </select>
+
+
+    <!--  int insertExpend(Expend expend);-->
+    <insert id="insertExpend" parameterType="com.atbanfei.ssm.pojo.Expend">
+        insert into tb_expend(e_title,e_gross)
+        values (#{e_title},#{e_gross})
+    </insert>
+
+    <!--int updateExpend(Expend expend);-->
+    <update id="updateExpend" parameterType="com.atbanfei.ssm.pojo.Expend">
+        update tb_expend
+        set e_title = #{e_title},
+            e_gross = #{e_gross}
+        where e_id = #{e_id}
+    </update>
+
+    <!--int deleteExpend(Integer e_id);-->
+    <delete id="deleteExpend" parameterType="Integer">
+        delete from tb_expend where e_id = #{e_id}
+    </delete>
+
+    <select id="sumGross" parameterType="Double" resultType="java.lang.Double">
+        select SUM(e_gross) from tb_expend
+    </select>
+</mapper>
